@@ -1,0 +1,139 @@
+* {
+  background-color: #000000;
+  color: #fafafa;
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  font-family: 'Lato', sans-serif;
+  font-family: 'Roboto', sans-serif;
+}
+
+div {
+  min-width: 40px;
+  min-height: 40px;
+}
+
+#container {
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#header-container {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0px;
+  border-bottom: 1.75px #4a4a4a solid;
+}
+
+#tile-container {
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 0px;
+}
+
+#tile-container div {
+  display: flex;
+  flex-direction: row;
+  border: 0px;
+}
+
+#tile-container div div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  border: 1.75px #4a4a4a solid;
+  margin: 2px;
+  min-width: 50px;
+  min-height: 50px;
+}
+
+#tile-container .on-row {
+  border: 1.75px #919191 solid;
+}
+
+
+/* ///////////////////
+// Keyboard Styling */
+
+#keyboard-container {
+  height: 170px;
+  width: 450px;
+}
+
+#keyboard-container div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
+  margin: 5px 0px;
+  height: 33%;
+}
+
+#keyboard-container div button {
+  color: #fafafa;
+  flex: 1;
+  border-radius: 5px;
+  border: 0px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+/* Adding margin to second row of keyboard to account for space on each side */
+#A {
+  margin-left: 22px !important;
+}
+
+#L {
+  margin-right: 22px !important;
+}
+
+/* Increasing size of 'Enter' and '<<' keys on keyboard */
+#ENTER,
+#BACK {
+  flex: 1.5 !important;
+}
+
+/* Colouring tiles */
+.green-color {
+  background-color: #4c8f47;
+}
+
+.yellow-color {
+  background-color: #b5a938;
+}
+
+.darkgrey-color {
+  background-color: #4a4a4a;
+}
+
+.lightgrey-color {
+  background-color: #969696;
+}
+
+
+/* Make tiles flip */
+.flip {
+    animation: 0.5s linear flipping;
+}
+
+@keyframes flipping {
+    0% {
+        transform: rotateX(0deg);
+    }
+    50% {
+        transform: rotateX(90deg);
+    }
+    100% {
+        transform: rotateX(0deg);
+    }
+}
