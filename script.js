@@ -25,8 +25,11 @@ let currentRow = 0;
 let currentTile = 0;
 let isGameOver = false;
 //let wordle = validAnswers[dailyDate];
-let wordle = 'panel'
-console.log(wordle);
+let wordle = 'shrek';
+let greenLetters = [];
+let yellowLetters = [];
+let missingGreenLetter = [];
+let missingYellowLetter = [];
 
 
 // Function to create and insert 6 row div's into tile-container
@@ -54,6 +57,18 @@ function makeTiles() {
 }
 
 makeTiles();
+
+// Function to create and insert the popup div
+function makePopUp() {
+  let popUpContainer = document.getElementById('popup-container')
+  let popUp = document.createElement('div');
+  popUp.setAttribute('id', 'popup');
+  popUpContainer.appendChild(popUp);
+}
+
+makePopUp();
+
+let popUpMessage = document.getElementById('popup');
 
 // Function to create 3 div containers for the keyboard rows
 function makeKeyboardRows() {
@@ -174,7 +189,7 @@ function click(letter) {
   console.log(letter);
   if (!isGameOver) {
     if (letter === 'ENTER') {
-      checkGuess();
+      checkGuessHard();
     } else if (letter === 'BACK') {
       removeLetter();
     } else {
@@ -187,54 +202,72 @@ function click(letter) {
 function checkGuess() {
   let currentGuess = guesses[currentRow].join('').toLowerCase();
   if (currentTile < 5) {
-    alert('Not enough letters');
+    popUpMessage.innerHTML = `<p>Not enough letters</p>`;
   } else if (validWords.includes(currentGuess) || validAnswers.includes(currentGuess)) {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
             colorTiles();
             isGameOver = true;
-            alert('You won');
+            popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
           } else if (currentTile === 5 && currentRow > 5) {
             colorTiles();
             isGameOver = true;
-            alert('Wrong answer! Game Over, You lost');
+            popUpMessage.innerHTML = `<p>Wrong, Game over</p>`;
           } else {
             colorTiles();
             currentRow++;
             currentTile = 0;
-            alert('Wrong answer, try again!')
+            popUpMessage.innerHTML = `<p>Wrong, Next Guess</p>`;
           }
       }
   } else {
-      alert('That is not a valid word');
+      popUpMessage.innerHTML = `<p>That is not a word</p>`;
       return;
   }
 }
 
 // CheckGuess for Hard Mode
-function checkGuess() {
+function checkGuessHard() {
   let currentGuess = guesses[currentRow].join('').toLowerCase();
   if (currentTile < 5) {
-    alert('Not enough letters');
+    popUpMessage.innerHTML = `<p>Not enough letters</p>`;
+    togglePopUp();
   } else if (validWords.includes(currentGuess) || validAnswers.includes(currentGuess)) {
+    if (hardModeGreen()) {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
             colorTiles();
             isGameOver = true;
-            //alert('You won');
+            popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
+            togglePopUp();
           } else if (currentTile === 5 && currentRow > 5) {
             colorTiles();
             isGameOver = true;
-            //alert('Wrong answer! Game Over, You lost');
+            popUpMessage.innerHTML = `<p>Wrong, Game over</p>`;
+            togglePopUp();
           } else {
             colorTiles();
             currentRow++;
             currentTile = 0;
-            //alert('Wrong answer, try again!')
+            popUpMessage.innerHTML = `<p>Wrong, Next Guess</p>`;
+            togglePopUp();
           }
       }
+    } else {
+      if (missingGreenLetter.length > 0) {
+        popUpMessage.innerHTML = `<p>${missingGreenLetter[0].letter} must be in position ${missingGreenLetter[0].position}</p>`;
+        togglePopUp();
+        return;
+      } else {
+        popUpMessage.innerHTML = `<p>${missingYellowLetter[0]} must be present<p>`;
+        togglePopUp();
+        return;
+      }
+
+    }
   } else {
-      alert('That is not a valid word');
+      popUpMessage.innerHTML = `<p>That is not a word</p>`;
+      togglePopUp();
       return;
   }
 }
@@ -247,6 +280,7 @@ function colorTiles() {
     let checkWordle = wordle;
     let guess = [];
     let guessOuter = [];
+    greenLetters = [];
 
     tilesPerRow.forEach(tile => {
         guess.push({letter: tile.getAttribute('data'), color: 'darkgrey-color', num : 1})
@@ -260,6 +294,8 @@ function colorTiles() {
             guess.num = 3;
             checkWordle = checkWordle.replace(thisLetter, '');
             guessOuter[index] = ' ';
+            greenLetters.push({letter: guess.letter, position: index});
+            console.log(greenLetters);
         }
     })
 
@@ -271,12 +307,11 @@ function colorTiles() {
           guess[index].color = 'yellow-color';
           guess[index].num = 2;
           checkWordle = checkWordle.replace(thisLetter, '');
+          yellowLetters.push(outer.letter);
+          console.log(outer.letter);
         }
       }
     })
-
-
-
 
 
     tilesPerRow.forEach((tile, index) => {
@@ -293,6 +328,7 @@ function colorTiles() {
 
 }
 
+// Code to color each key on the virtual keyboard the necessary color (dark grey, yellow or green)
 
 let colorKeys = [
   {letter : 'U'},
@@ -324,7 +360,6 @@ let colorKeys = [
 ]
 
 
-
 function colorEachKey(guess) {
   colorKeys.forEach((key) => {
     guess.forEach((eachguess, i) => {
@@ -332,19 +367,19 @@ function colorEachKey(guess) {
         let buttonKey = document.getElementById(key.letter);
         console.log(buttonKey.class);
         if (eachguess.color === 'green-color') {
-          //key.color = 'green-color';
           buttonKey.className = 'green-color';
         } else if (eachguess.color === 'yellow-color') {
-          //key.color = 'yellow-color';
           buttonKey.className = 'yellow-color';
         } else if (eachguess.color === 'darkgrey-color') {
-          //key.color = 'darkgrey-color';
           buttonKey.className = 'darkgrey-color';
         }
       }
     });
   });
 }
+
+
+// Code to allow physical keyboard to work
 
 let validLetters = [
 'Q',
@@ -382,8 +417,81 @@ function keyPressed(e) {
   if (validLetters.includes(letter)) {
     click(letter);
   } else if (letter == 'ENTER') {
-    checkGuess();
+    checkGuessHard();
   } else if (letter == 'BACKSPACE') {
     removeLetter();
   }
+}
+
+
+
+///////////////////////
+function hardModeGreen() {
+
+  let tilesPerRow = document.querySelector('#row' + currentRow).childNodes;
+  let greenTotal = 0;
+  let yellowTotal = 0;
+  let guess = [];
+  let yellowGuess = [];
+  missingGreenLetter = [];
+  missingYellowLetter = [];
+
+  tilesPerRow.forEach((tile, i) => {
+      guess.push({letter: tile.getAttribute('data'), position: i})
+      yellowGuess.push(tile.getAttribute('data'))
+  })
+
+
+  greenLetters.forEach((letter, index) => {
+    let letterPosition = letter.position;
+    let enteredLetter = guess[letterPosition].letter
+    if (greenLetters.length === 0) {
+      return;
+    } else if (letter.letter === enteredLetter) {
+      greenTotal += 1;
+    } else {
+      missingGreenLetter.push({letter: letter.letter, position: letterPosition + 1});
+    }
+  });
+
+
+  yellowLetters.forEach((yellowletter, index) => {
+    if (yellowGuess.includes(yellowletter)) {
+      yellowTotal += 1;
+    } else {
+      missingYellowLetter.push(yellowletter);
+    }
+  });
+
+
+  function greenLetterCheck() {
+    if (greenTotal === greenLetters.length) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function yellowLetterCheck() {
+    if (yellowTotal === yellowLetters.length) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  if (greenLetterCheck() && yellowLetterCheck()) {
+    return true;
+  } else {
+    return false;
+  }
+
+
+}
+
+function togglePopUp() {
+  popUpMessage.classList.toggle('popup-hide');
+  setTimeout(() => {
+    popUpMessage.classList.toggle('popup-hide');
+  }, 2000 );
 }
