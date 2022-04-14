@@ -13,19 +13,24 @@ let validWords = [
 
 
 // Code to define which day it is
-let today = new Date();
-let milliSince1970 = today.getTime();
-let milliPerDay = 86400000;
-let daysSince1970 = Math.floor(milliSince1970/milliPerDay);
-let dailyDate = daysSince1970 - 19090;
+function todaysDate() {
+  let today = new Date();
+  let milliSince1970 = today.getTime();
+  let milliPerDay = 86400000;
+  let daysSince1970 = Math.floor(milliSince1970/milliPerDay);
+  console.log(daysSince1970);
+  let dailyDate = daysSince1970 - 18797 + 0;
+  return dailyDate;
+}
+
 
 
 // Defining variables
 let currentRow = 0;
 let currentTile = 0;
 let isGameOver = false;
-//let wordle = validAnswers[dailyDate];
-let wordle = 'boozy';
+//let wordle = validAnswers[todaysDate()];
+let wordle = 'gammy';
 let greenLetters = [];
 let yellowLetters = [];
 let missingGreenLetter = [];
@@ -237,7 +242,7 @@ function checkGuessHard() {
     popUpMessage.innerHTML = `<p>Not enough letters</p>`;
     shake();
     togglePopUp();
-  } else if (validWords.includes(currentGuess) || validAnswers.includes(currentGuess)) {
+  } else if (validWords.includes(currentGuess) || validAnswers.includes(currentGuess) || currentGuess === wordle) {
     if (hardModeColor()) {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
