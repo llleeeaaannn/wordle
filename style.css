@@ -1,3 +1,4 @@
+/* General body styling */
 * {
   background-color: #000000;
   color: #fafafa;
@@ -8,17 +9,14 @@
   font-family: 'Roboto', sans-serif;
 }
 
-div {
-  min-width: 40px;
-  min-height: 40px;
-}
-
+/* Containers styling for flexbox and sizing */
 #container {
   height: 95vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 #header-container {
@@ -32,7 +30,8 @@ div {
 }
 
 #tile-container {
-  width: 50vw;
+  position: relative;
+  width: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -40,31 +39,51 @@ div {
   border: 0px;
 }
 
+/* Styling for each row of tiles (mainly flexbox) */
 #tile-container div {
   display: flex;
   flex-direction: row;
   border: 0px;
 }
 
+/* Styling for each tile */
 #tile-container div div{
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 30px;
-  border: 1.75px #4a4a4a solid;
+  border: 2px solid rgba(60, 60 ,60, 0.6);
   margin: 2px;
-  min-width: 50px;
-  min-height: 50px;
+  min-width: 62.5px;
+  min-height: 62.5px;
 }
 
+/* Styling to change tile border colour when selected */
 #tile-container .on-row {
-  border: 1.75px #919191 solid;
+  border: 2px solid rgba(83, 83, 91, 0.75);
+}
+
+/* Styling to shake current row of divs when answer is not valid */
+@keyframes shake {
+  0% { transform: translate(1px) }
+  10% { transform: translate(-1px) }
+  20% { transform: translate(-3px) }
+  30% { transform: translate(3px) }
+  40% { transform: translate(1px) }
+  50% { transform: translate(-1px) }
+  60% { transform: translate(-3px) }
+  70% { transform: translate(3px) }
+  80% { transform: translate(-1px) }
+  90% { transform: translate(1px) }
+  100% { transform: translate(1px) }
+}
+
+.shake {
+  animation: shake 0.5s;
 }
 
 
-/* ///////////////////
-// Keyboard Styling */
-
+/* Keyboard Styling */
 #keyboard-container {
   height: 170px;
   width: 450px;
@@ -97,27 +116,30 @@ div {
   margin-right: 22px !important;
 }
 
-/* Increasing size of 'Enter' and '<<' keys on keyboard */
+/* Increasing size of 'Enter' and 'Back' keys on keyboard */
 #ENTER,
 #BACK {
   flex: 1.5 !important;
 }
 
-/* Colouring tiles */
+/* Colouring tiles & keys */
 .green-color {
-  background-color: #4c8f47;
+  background-color: #588c4c;
+  border: 0px !important;
 }
 
 .yellow-color {
-  background-color: #b5a938;
+  background-color: #b89c3c;
+  border: 0px !important;
 }
 
 .darkgrey-color {
-  background-color: #4a4a4a;
+  background-color: #403c3c;
+  border: 0px !important;
 }
 
 .lightgrey-color {
-  background-color: #969696;
+  background-color: #888484;
 }
 
 
@@ -141,8 +163,6 @@ div {
 
 
 /* Style for pop-up message */
-#popup-container {
-}
 
 #popup {
   display: flex;
@@ -154,6 +174,8 @@ div {
   border-radius: 5px;
   background: rgba(255, 255, 255, 1);
   opacity: 0.0;
+  position: absolute;
+  top: 15px;
 }
 
 .popup-hide {

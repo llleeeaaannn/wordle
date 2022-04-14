@@ -60,7 +60,7 @@ makeTiles();
 
 // Function to create and insert the popup div
 function makePopUp() {
-  let popUpContainer = document.getElementById('popup-container')
+  let popUpContainer = document.getElementById('tile-container')
   let popUp = document.createElement('div');
   popUp.setAttribute('id', 'popup');
   popUpContainer.appendChild(popUp);
@@ -203,26 +203,30 @@ function checkGuess() {
   let currentGuess = guesses[currentRow].join('').toLowerCase();
   if (currentTile < 5) {
     popUpMessage.innerHTML = `<p>Not enough letters</p>`;
+    shake();
+    togglePopUp();
   } else if (validWords.includes(currentGuess) || validAnswers.includes(currentGuess)) {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
             colorTiles();
             isGameOver = true;
             popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
-          } else if (currentTile === 5 && currentRow > 5) {
+            togglePopUp();
+          } else if (currentTile === 5 && currentRow > 4) {
             colorTiles();
             isGameOver = true;
-            popUpMessage.innerHTML = `<p>Wrong, Game over</p>`;
+            popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
+            togglePopUp();
           } else {
             colorTiles();
             currentRow++;
             currentTile = 0;
-            popUpMessage.innerHTML = `<p>Wrong, Next Guess</p>`;
           }
       }
   } else {
-      popUpMessage.innerHTML = `<p>That is not a word</p>`;
-      return;
+      popUpMessage.innerHTML = `<p>Not in word list</p>`;
+      shake();
+      togglePopUp();
   }
 }
 
@@ -231,44 +235,43 @@ function checkGuessHard() {
   let currentGuess = guesses[currentRow].join('').toLowerCase();
   if (currentTile < 5) {
     popUpMessage.innerHTML = `<p>Not enough letters</p>`;
+    shake();
     togglePopUp();
   } else if (validWords.includes(currentGuess) || validAnswers.includes(currentGuess)) {
-    if (hardModeGreen()) {
+    if (hardModeColor()) {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
             colorTiles();
             isGameOver = true;
             popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
             togglePopUp();
-          } else if (currentTile === 5 && currentRow > 5) {
+          } else if (currentTile === 5 && currentRow > 4) {
             colorTiles();
             isGameOver = true;
-            popUpMessage.innerHTML = `<p>Wrong, Game over</p>`;
+            popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
             togglePopUp();
           } else {
             colorTiles();
             currentRow++;
             currentTile = 0;
-            popUpMessage.innerHTML = `<p>Wrong, Next Guess</p>`;
-            togglePopUp();
           }
       }
     } else {
       if (missingGreenLetter.length > 0) {
-        popUpMessage.innerHTML = `<p>${missingGreenLetter[0].letter} must be in position ${missingGreenLetter[0].position}</p>`;
+        popUpMessage.innerHTML = `<p>${greenMissingPosition()} letter must be ${missingGreenLetter[0].letter}</p>`;
+        shake();
         togglePopUp();
-        return;
       } else {
-        popUpMessage.innerHTML = `<p>${missingYellowLetter[0]} must be present<p>`;
+        popUpMessage.innerHTML = `<p>Guess must contain ${missingYellowLetter[0]}<p>`;
+        shake();
         togglePopUp();
-        return;
       }
 
     }
   } else {
-      popUpMessage.innerHTML = `<p>That is not a word</p>`;
+      popUpMessage.innerHTML = `<p>Not in word list</p>`;
+      shake();
       togglePopUp();
-      return;
   }
 }
 
@@ -426,7 +429,7 @@ function keyPressed(e) {
 
 
 ///////////////////////
-function hardModeGreen() {
+function hardModeColor() {
 
   let tilesPerRow = document.querySelector('#row' + currentRow).childNodes;
   let greenTotal = 0;
@@ -493,5 +496,29 @@ function togglePopUp() {
   popUpMessage.classList.toggle('popup-hide');
   setTimeout(() => {
     popUpMessage.classList.toggle('popup-hide');
-  }, 2000 );
+  }, 1000 );
+}
+
+// Function to return the position of earliest missing green letter for hard mode in necessary vocab (1st, 2nd...)
+function greenMissingPosition() {
+  if (missingGreenLetter[0].position === 1) {
+    return '1st';
+  } else if (missingGreenLetter[0].position === 2) {
+    return '2nd';
+  } else if (missingGreenLetter[0].position === 3) {
+    return '3rd';
+  } else if (missingGreenLetter[0].position === 4) {
+    return '4th';
+  } else if (missingGreenLetter[0].position === 5) {
+    return '5th';
+  }
+}
+
+
+function shake() {
+  let shakeRow = document.getElementById('row' + currentRow);
+  shakeRow.classList.toggle('shake')
+  setTimeout(() => {
+    shakeRow.classList.toggle('shake');
+  }, 500 );
 }
