@@ -26,7 +26,7 @@ let currentRow = 0;
 let currentTile = 0;
 let isGameOver = false;
 //let wordle = validAnswers[todaysDate()];
-let wordle = 'meabh';
+let wordle = 'bamba';
 let greenLetters = [];
 let yellowLetters = [];
 let missingGreenLetter = [];
@@ -270,7 +270,7 @@ function checkGuess() {
           if (currentGuess === wordle) {
             colorTiles();
             isGameOver = true;
-            popUpMessage.innerHTML = `<p>Cheater :/</p>`;
+            popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
             togglePopUp();
           } else if (currentTile === 5 && currentRow > 4) {
             colorTiles();
@@ -303,9 +303,9 @@ function checkGuessHard() {
           if (currentGuess === wordle) {
             colorTiles();
             jump();
-            //isGameOver = true;
-            //popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
-            //togglePopUp();
+            isGameOver = true;
+            popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
+            togglePopUp();
           } else if (currentTile === 5 && currentRow > 4) {
             colorTiles();
             isGameOver = true;
