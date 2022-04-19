@@ -11,7 +11,7 @@ let validWords = [
 
 
 // Code to define which day it is
-function todaysDate() {
+function wordleNumber() {
   let today = new Date();
   let milliSince1970 = today.getTime();
   let milliPerDay = 86400000;
@@ -25,8 +25,8 @@ function todaysDate() {
 let currentRow = 0;
 let currentTile = 0;
 let isGameOver = false;
-//let wordle = validAnswers[todaysDate()];
-let wordle = 'bamba';
+let wordle = validAnswers[wordleNumber()];
+//let wordle = 'bamba';
 let greenLetters = [];
 let yellowLetters = [];
 let missingGreenLetter = [];
@@ -195,7 +195,7 @@ function removeLetter() {
 function click(letter) {
   if (!isGameOver) {
     if (letter === 'ENTER') {
-      if (hardModeOn) {
+      if (isHardModeOn()) {
         checkGuessHard();
       } else {
         checkGuess();
@@ -247,7 +247,7 @@ function keyPressed(e) {
   if (validLetters.includes(letter)) {
     click(letter);
   } else if (letter == 'ENTER') {
-    if (hardModeOn) {
+    if (isHardModeOn()) {
       checkGuessHard();
     } else {
       checkGuess()
@@ -276,7 +276,7 @@ function checkGuess() {
             colorTiles();
             isGameOver = true;
             popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
-            togglePopUp();
+            togglePopUpLong();
           } else {
             colorTiles();
             currentRow++;
@@ -310,7 +310,7 @@ function checkGuessHard() {
             colorTiles();
             isGameOver = true;
             popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
-            togglePopUp();
+            togglePopUpLong();
           } else {
             colorTiles();
             currentRow++;
@@ -519,6 +519,14 @@ function togglePopUp() {
   }, 1000 );
 }
 
+// Function to make pop up message to appear temporarily
+function togglePopUpLong() {
+  popUpMessage.classList.toggle('popup-hide');
+  setTimeout(() => {
+    popUpMessage.classList.toggle('popup-hide');
+  }, 3000 );
+}
+
 // Function to return the position of earliest missing green letter for hard mode in necessary vocab (1st, 2nd...)
 function greenMissingPosition() {
   if (missingGreenLetter[0].position === 1) {
@@ -623,6 +631,43 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// Code to toggle settings when clicked etc
+let settingsButton = document.getElementById('settings-button');
+let settingsContainer = document.getElementById('settings-container');
+let settingsClose = document.getElementById('close-settings-button');
+
+settingsButton.addEventListener('click', () => {
+  settingsContainer.classList.toggle('settings-hide');
+})
+
+settingsClose.addEventListener('click', () => {
+  settingsContainer.classList.toggle('settings-hide');
+})
+
+// Code to toggle Help when clicked etc
+let helpButton = document.getElementById('help-button');
+let helpContainer = document.getElementById('help-container');
+let helpClose = document.getElementById('close-help-button');
+
+helpButton.addEventListener('click', () => {
+  helpContainer.classList.toggle('help-hide');
+})
+
+helpClose.addEventListener('click', () => {
+  helpContainer.classList.toggle('help-hide');
+})
+
+
+// Code to populate wordle number at bottom right of settings
+function addWordleNumber() {
+  let wordleNumberParagraph = document.getElementById('wordle-number');
+  wordleNumberParagraph.textContent = `#${wordleNumber()}`;
+}
+
+addWordleNumber()
+
+
+// Code to populate scoreboard with current scores
 function addScoreValues() {
   console.log('heck');
   let playedValue = document.getElementById('played-value');
@@ -702,3 +747,16 @@ function makeCountdown() {
 }
 
 setInterval(makeCountdown, 1000)
+
+// Code to change to and from Hard Mode when switch is clicked
+
+let hardModeSwitch = document.getElementById('hard-mode-switch');
+let hardModeCheckbox = document.getElementById('hard-mode-checkbox');
+
+function isHardModeOn() {
+  if (hardModeCheckbox.checked) {
+    return true;
+  } else {
+    return false;
+  }
+}

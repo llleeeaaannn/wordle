@@ -9,6 +9,10 @@
   font-family: 'Roboto', sans-serif;
 }
 
+button {
+  cursor: pointer;
+}
+
 
 /* Containers styling for flexbox and sizing */
 #container {
@@ -25,7 +29,6 @@
   height: 7vh;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
   border-bottom: 1.75px #4a4a4a solid;
 }
@@ -39,6 +42,36 @@
   justify-content: center;
   border: 0px;
 }
+
+/* Styling for header (mainly flexbox) */
+#scoreboard-button {
+  margin-left: auto;
+  stroke-width: 4;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+}
+
+#help-button {
+  margin-right: auto;
+}
+
+/* SVG Icon Styling */
+svg {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke: white;
+  stroke-width: 2;
+  width: 40px;
+  height: 40px;
+  margin: 0px 20px;
+}
+
+#score-icon,
+#settings-icon {
+  stroke-width: 4;
+}
+
 
 /* Styling for each row of tiles (mainly flexbox) */
 #tile-container div {
@@ -216,31 +249,6 @@
   color: #000000;
 }
 
-/* SVG Icon Styling */
-svg {
-  fill: none;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  stroke: white;
-  stroke-width: 2;
-  width: 40px;
-  height: 40px;
-}
-
-.icon {
-  margin: 0px 20px;
-}
-
-.menu-icon {
-  margin: 0px 20px;
-}
-
-.score-icon {
-  margin: 0px 20px;
-  stroke-width: 4;
-  stroke-linejoin: miter;
-  stroke-linecap: butt;
-}
 
 /* Dropdown Menu Positioning and General Sizing Styling */
 #dropdown-container {
@@ -285,6 +293,7 @@ svg {
 #dropdown-header button {
   border: 0px;
   margin: 10px;
+  cursor: pointer;
 }
 
 #dropdown-header h1 {
@@ -343,6 +352,7 @@ svg {
   align-self: flex-end;
   background-color: rgba(0, 0 ,0, 0.0);
   border: 0px;
+  cursor: pointer;
   margin-right: 5px;
   margin-top: 5px;
 }
@@ -465,4 +475,173 @@ svg {
   width: 170px;
   padding: 5px 10px;
   font-size: 25px;
+}
+
+
+/* Settings Styling */
+#settings-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+}
+
+.settings-hide {
+  display: none !important;
+}
+
+#settings-inner-container {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  height: 100%;
+}
+
+#settings-header,
+#settings-hard-mode,
+#settings-dark-theme,
+#settings-high-contrast,
+#settings-feedback,
+#settings-community,
+#settings-questions,
+#settings-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 15px 0px;
+  border-bottom: 1.5px solid rgba(60, 60 ,60, 0.6);
+}
+
+.settings-extra-text {
+  display: flex;
+  flex-direction: column;
+}
+
+#settings-footer,
+#settings-header {
+  border: 0px;
+}
+
+#settings-footer {
+  margin-top: auto;
+}
+
+#settings-header {
+  justify-content: space-between;
+  padding: 10px 0px;
+}
+
+#settings-header #hidden-button {
+  visibility: hidden;
+}
+
+
+
+/* Settings text styling */
+#settings-container h3 {
+  color: #ffffff;
+  font-size: 19px;
+}
+
+#settings-container span {
+  color: #ffffff;
+  font-size: 16px;
+}
+
+#settings-container p {
+  color: #888484;
+  font-size: 10px;
+}
+
+#settings-container a {
+  color: #888484;
+  font-size: 14px;
+}
+
+#settings-header button {
+  border: 0px;
+  cursor: pointer;
+}
+
+
+/* Help Styling */
+#help-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+}
+
+.help-hide {
+  display: none !important;
+}
+
+#help-inner-container {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  height: 100%;
+}
+
+#help-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px 0px;
+}
+
+.hidden-help-button {
+  visibility: hidden;
+}
+
+#help-instructions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px 0px;
+  border-bottom: 1.5px solid rgba(60, 60 ,60, 0.6);
+}
+
+#help-examples {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px 0px;
+  border-bottom: 1.5px solid rgba(60, 60 ,60, 0.6);
+}
+
+#help-footer {
+  padding: 10px 0px;
+}
+
+#help-container h3 {
+  color: #ffffff;
+  font-size: 19px;
+}
+
+#help-container h6 {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+#help-container p {
+  font-size: 14px;
+  margin: 7px 0px;
+}
+
+#help-container img {
+  margin: 20px 0px 10px 0px;
+}
+
+#help-header button {
+  border: 0px;
+  cursor: pointer;
 }
