@@ -25,13 +25,16 @@ function wordleNumber() {
 let currentRow = 0;
 let currentTile = 0;
 let isGameOver = false;
+let gameWon = false;
 let wordle = validAnswers[wordleNumber()];
-//let wordle = 'bamba';
+//let wordle = 'level';
 let greenLetters = [];
 let yellowLetters = [];
 let missingGreenLetter = [];
 let missingYellowLetter = [];
 let hardModeOn = true;
+let emojiCopyPaste = "";
+let yeet = "hello";
 let played = 24;
 let wins = 21;
 let winPercentage =  Math.floor(wins / played * 100);
@@ -178,6 +181,8 @@ function addLetter(letter) {
 }
 
 
+
+
 // Function to remove letter from current tile when 'BACK' key is clicked
 function removeLetter() {
   if (currentTile > 0) {
@@ -269,14 +274,19 @@ function checkGuess() {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
             colorTiles();
+            jump();
             isGameOver = true;
+            gameWon = true;
             popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
             togglePopUp();
+            copyResults();
           } else if (currentTile === 5 && currentRow > 4) {
             colorTiles();
             isGameOver = true;
+            gameWon = false;
             popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
             togglePopUpLong();
+            copyResults();
           } else {
             colorTiles();
             currentRow++;
@@ -304,13 +314,17 @@ function checkGuessHard() {
             colorTiles();
             jump();
             isGameOver = true;
+            gameWon = true;
             popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
             togglePopUp();
+            copyResults();
           } else if (currentTile === 5 && currentRow > 4) {
             colorTiles();
             isGameOver = true;
+            gameWon = false;
             popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
             togglePopUpLong();
+            copyResults();
           } else {
             colorTiles();
             currentRow++;
@@ -519,7 +533,7 @@ function togglePopUp() {
   }, 1000 );
 }
 
-// Function to make pop up message to appear temporarily
+// Function to make pop up message to appear temporarily but for longer
 function togglePopUpLong() {
   popUpMessage.classList.toggle('popup-hide');
   setTimeout(() => {
@@ -619,17 +633,31 @@ document.addEventListener('click', function(e) {
 // Code to toggle scoreboard when clicked etc
 let scoreboardButton = document.getElementById('scoreboard-button');
 let scoreboardContainer = document.getElementById('scoreboard-container');
+let clockShareContainer = document.getElementById('clock-share-container');
+let shareButton = document.getElementById('scoreboard-share-button')
 
 scoreboardButton.addEventListener('click', () => {
   scoreboardContainer.classList.toggle('scoreboard-hide');
   addScoreValues();
+  if (isGameOver) {
+    clockShareContainer.classList.remove('hide-clock-share')
+  } else {
+    clockShareContainer.classList.add('hide-clock-share')
+  }
 })
 
 document.addEventListener('click', function(e) {
-  if (!scoreboardButton.contains(e.target)) {
+  if (!scoreboardButton.contains(e.target) && !shareButton.contains(e.target)) {
     scoreboardContainer.classList.add('scoreboard-hide');
   }
 });
+
+shareButton.addEventListener('click', () => {
+  navigator.clipboard.writeText(emojiCopyPaste);
+  popUpMessage.innerHTML = `<p>Copied results to clipboard</p>`;
+  togglePopUp();
+  console.log(emojiCopyPaste);
+})
 
 // Code to toggle settings when clicked etc
 let settingsButton = document.getElementById('settings-button');
@@ -669,7 +697,6 @@ addWordleNumber()
 
 // Code to populate scoreboard with current scores
 function addScoreValues() {
-  console.log('heck');
   let playedValue = document.getElementById('played-value');
   let winPercentageValue = document.getElementById('win-percentage-value');
   let currentStreakValue = document.getElementById('current-streak-value');
@@ -740,7 +767,7 @@ function makeCountdown() {
   minutes = '0' + minutes
   seconds = '0' + seconds;
 
-  if (isGameOver === false) {
+  if (isGameOver === true) {
     let countdown = document.getElementById('countdown-container');
     countdown.innerHTML = `<h5>NEXT WORDLE</h5><span> ${hours.slice(-2)} : ${minutes.slice(-2)} : ${seconds.slice(-2)}`;
   }
@@ -758,5 +785,68 @@ function isHardModeOn() {
     return true;
   } else {
     return false;
+  }
+}
+
+
+function copyResults() {
+  if (gameWon === true) {
+    if (isHardModeOn()) {
+      emojiCopyPaste += `Wordle ${wordleNumber()} ${currentRow + 1}/6*\n`
+    } else {
+      emojiCopyPaste += `Wordle ${wordleNumber()} ${currentRow + 1}/6\n`
+    }
+  } else {
+    if (isHardModeOn()) {
+      emojiCopyPaste += `Wordle ${wordleNumber()} X/6*\n`
+    } else {
+      emojiCopyPaste += `Wordle ${wordleNumber()} X/6\n`
+    }
+  }
+
+  for (i = 0; i <= currentRow; i++) {
+    let thisGuessList = guesses[i];
+    let checkWordle = wordle;
+    let guess = [];
+    let guessOuter = [];
+    let guessEmojiColors = [];
+
+    thisGuessList.forEach(guessLetter => {
+        guess.push({letter: guessLetter, color: 'darkgrey'})
+        guessOuter.push({letter: guessLetter, color: 'darkgrey'})
+    })
+
+    guess.forEach((guessLetter, index) => {
+        thisLetter = guessLetter.letter.toLowerCase();
+        if (thisLetter === wordle[index]) {
+            guessLetter.color = 'green';
+            checkWordle = checkWordle.replace(thisLetter, '');
+            guessOuter[index] = ' ';
+        }
+    })
+
+    guessOuter.forEach((outer, index) => {
+      if (!(guess[index].color === 'green')) {
+        thisLetter = outer.letter.toLowerCase();
+        if (checkWordle.includes(thisLetter)) {
+          guess[index].color = 'yellow';
+          checkWordle = checkWordle.replace(thisLetter, '');
+        }
+      }
+    })
+
+    console.log(guess);
+
+    for (x = 0; x < guess.length; x++) {
+      if (guess[x].color === 'green') {
+        emojiCopyPaste += String.fromCodePoint(0x1F7E9);
+      } else if (guess[x].color === 'yellow') {
+        emojiCopyPaste += String.fromCodePoint(0x1F7E8);
+      } else if (guess[x].color === 'darkgrey') {
+        emojiCopyPaste += String.fromCodePoint(0x2B1B);
+      }
+    }
+
+    emojiCopyPaste += '\n';
   }
 }
