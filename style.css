@@ -1,7 +1,36 @@
+/* Color Themes */
+:root {
+  --fontColor: #fff;
+  --oppositeFont: #000;
+  --colorBG: #000;
+  --oppositeBG: #fff;
+  --secondFontColor: #888484;
+  --offsetColorBG: #141414;
+  --invisibleBG: rgba(0, 0 ,0, 0.0);
+  --greenBG: #588c4c;
+  --yellowBG: #b89c3c;
+  --darkGreyBG: #403c3c;
+  --lightGreyBG: #888484;
+}
+
+.darkroot {
+  --fontColor: #000;
+  --oppositeFont: #fff;
+  --colorBG: #fff;
+  --oppositeBG: #000;
+  --secondFontColor: #888484;
+  --offsetColorBG: #fff;
+  --invisibleBG: rgba(0, 0 ,0, 0.0);
+  --greenBG: #588c4c;
+  --yellowBG: #b89c3c;
+  --darkGreyBG: #403c3c;
+  --lightGreyBG: #888484;
+}
+
 /* General body styling */
 * {
-  background-color: #000000;
-  color: #fafafa;
+  background-color: var(--colorBG);
+  color: var(--fontColor);
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
@@ -60,7 +89,7 @@ svg {
   fill: none;
   stroke-linejoin: round;
   stroke-linecap: round;
-  stroke: white;
+  stroke: var(--oppositeBG);
   stroke-width: 2;
   width: 40px;
   height: 40px;
@@ -72,6 +101,21 @@ svg {
   stroke-width: 4;
 }
 
+#help-icon {
+  stroke-width: 10;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+}
+
+#settings-icon {
+  stroke-width: 10;
+  stroke-linejoin: miter;
+  stroke-linecap: butt;
+}
+
+#settings-icon polyline {
+  fill: var(--oppositeBG);
+}
 
 /* Styling for each row of tiles (mainly flexbox) */
 #tile-container div {
@@ -162,7 +206,6 @@ svg {
 }
 
 #keyboard-container div button {
-  color: #fafafa;
   flex: 1;
   border-radius: 5px;
   border: 0px;
@@ -187,22 +230,22 @@ svg {
 
 /* Colouring tiles & keys */
 .green-color {
-  background-color: #588c4c;
+  background-color: var(--greenBG);
   border: 0px !important;
 }
 
 .yellow-color {
-  background-color: #b89c3c;
+  background-color: var(--yellowBG);
   border: 0px !important;
 }
 
 .darkgrey-color {
-  background-color: #403c3c;
+  background-color: var(--darkGreyBG);
   border: 0px !important;
 }
 
 .lightgrey-color {
-  background-color: #888484;
+  background-color: var(--lightGreyBG)
 }
 
 
@@ -234,7 +277,7 @@ svg {
   height: auto;
   padding: 20px;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 1);
+  background-color: var(--oppositeBG);
   opacity: 0.0;
   position: absolute;
   top: 15px;
@@ -246,8 +289,8 @@ svg {
 }
 
 #popup p {
-  background: rgba(255, 255, 255, .0);
-  color: #000000;
+  background-color: var(--invisibleBG);
+  color: var(--oppositeFont);
 }
 
 
@@ -318,7 +361,7 @@ svg {
   position: absolute;
   left: 50%;
   top: 25%;
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   padding: 15px;
 }
 
@@ -329,7 +372,7 @@ svg {
   left: -50%;
   top: -50%;
   align-items: center;
-  background-color: #141414;
+  background-color: var(--offsetColorBG);
   border: 0.5px solid rgba(60, 60 ,60, 0.6);
   border-radius: 5px;
 }
@@ -337,7 +380,7 @@ svg {
 #scores-container {
   display: flex;
   flex-direction: row;
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
 }
 
 #scores-container div {
@@ -346,12 +389,12 @@ svg {
   align-items: center;
   margin: 5px;
   padding: 3px;
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
 }
 
 #scoreboard-container button {
   align-self: flex-end;
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   border: 0px;
   cursor: pointer;
   margin-right: 5px;
@@ -359,24 +402,24 @@ svg {
 }
 
 #scoreboard-container h3 {
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   font-size: 15px;
   margin-top: -5px;
 }
 
 #scoreboard-container h4 {
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   font-size: 15px;
 }
 
 #scores-container .value {
   font-size: 32px;
   font-weight: 500;
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
 }
 
 #scores-container span {
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   font-size: 12px;
   font-weight: 300;
 }
@@ -389,12 +432,12 @@ svg {
 
 #chart-score-container {
   width: 80%;
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   margin: 5px;
 }
 
 #chart-score-container span {
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   margin-right: 10px;
 }
 
@@ -407,7 +450,7 @@ svg {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   margin: 4px;
   align-items: center;
 }
@@ -424,11 +467,11 @@ svg {
 }
 
 #bar-chart-four {
-  background-color: #588c4c;
+  background-color: var(--greenBG);
 }
 
 #chart-score-container p {
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   float: right;
   margin-right: 3px;
   margin-left: 3px;
@@ -440,7 +483,7 @@ svg {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   margin-bottom: 20px;
 }
 
@@ -450,7 +493,7 @@ svg {
 
 /* Styling for countdown clock */
 #countdown-container {
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   width: 170px;
   margin: 10px 25px;
 }
@@ -458,23 +501,23 @@ svg {
 #countdown-container h5 {
   text-align: center;
   font-size: 15px;
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
 }
 
 #countdown-container span {
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   font-size: 32px;
 }
 
 /* Share Button Styling */
 #share-container {
-  background-color: rgba(0, 0 ,0, 0.0);
+  background-color: var(--invisibleBG);
   padding: 10px 25px;
   border-left: 1px white solid;
 }
 
 #share-container button{
-  background-color: #588c4c;
+  background-color: var(--greenBG);
   border: 0px;
   border-radius: 5px;
   width: 170px;
@@ -552,22 +595,20 @@ svg {
 
 /* Settings text styling */
 #settings-container h3 {
-  color: #ffffff;
   font-size: 19px;
 }
 
 #settings-container span {
-  color: #ffffff;
   font-size: 16px;
 }
 
 #settings-container p {
-  color: #888484;
+  color: var(--secondFontColor);
   font-size: 10px;
 }
 
 #settings-container a {
-  color: #888484;
+  color: var(--secondFontColor);
   font-size: 14px;
 }
 
@@ -632,12 +673,10 @@ svg {
 }
 
 #help-container h3 {
-  color: #ffffff;
   font-size: 19px;
 }
 
 #help-container h6 {
-  color: #ffffff;
   font-size: 14px;
 }
 
