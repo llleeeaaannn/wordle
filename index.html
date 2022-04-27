@@ -8,6 +8,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400&family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <style id="rootStylesheet">
+    :root {
+      --fontColor: #fff;
+      --oppositeFont: #000;
+      --colorBG: #000;
+      --oppositeBG: #fff;
+      --secondFontColor: #888484;
+      --offsetColorBG: #141414;
+      --tileBorderColor: 2px solid rgba(60, 60 ,60, 0.6);
+      --tileOnRowBorderColor: 2px solid rgba(83, 83, 91, 0.75);
+      --invisibleBG: rgba(0, 0 , 0, 0.0);
+      --greenBG: #588c4c;
+      --yellowBG: #b89c3c;
+      --darkGreyBG: #403c3c;
+      --lightGreyBG: #888484;
+      --uncheckedKey: #fff;
+      --checkedKey: #fff;
+      --white: #fff;
+
+    }
+  </style>
 </head>
 
 <body>
@@ -17,7 +38,7 @@
     <div id="header-container">
 
       <a href="#" id="dropdown-button">
-        <svg viewBox="0 0 20 20" class="icon">
+        <svg viewBox="0 0 20 20">
           <line x1='3' y1='4.5' x2='17' y2='4.5' />
           <line x1='3' y1='10' x2='17' y2='10' />
           <line x1='3' y1='15.5' x2='17' y2='15.5' />
@@ -25,7 +46,7 @@
       </a>
 
       <a href="#" id="help-button">
-        <svg class="score" viewBox="0 0 96 96" id="help-icon" class="icon">
+        <svg class="score" viewBox="0 0 96 96" id="help-icon">
           <circle cx='48' cy='48' r='40' />
           <polyline points = "48 68, 48 78"/>
           <path
@@ -41,13 +62,13 @@
       <h1>WORDLE</h1>
 
       <a href="#" id="scoreboard-button">
-        <svg viewBox="0 0 48 48" id="score-icon" class="icon">
+        <svg viewBox="0 0 48 48" id="score-icon">
           <polyline points="8 40, 40 40, 40 24, 29.3 24, 29.3 40, 29.3 8, 18.66 8, 18.66 40, 8 40, 8 18, 18.66 18"/>
         </svg>
       </a>
 
       <a href="#" id="settings-button">
-        <svg viewBox="0 0 200 200" id="settings-icon" class="icon">
+        <svg viewBox="0 0 200 200" id="settings-icon">
           <circle cx='100' cy='100' r='45' stroke-width="38"/>
           <polyline points="78 40, 122 40, 120 20, 80 20, 78 40"/>
           <polyline points="141 51, 163 89, 179.2 77.4, 159.2 42.7, 141 51"/>
@@ -66,7 +87,7 @@
 
         <h1>Games</h1>
 
-        <button type="button" name="close">X</button>
+        <button type="button" name="close" id="dropdown-close">X</button>
 
       </div>
 

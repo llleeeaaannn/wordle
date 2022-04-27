@@ -1,41 +1,52 @@
 /* Color Themes */
-:root {
+/* :root {
   --fontColor: #fff;
   --oppositeFont: #000;
   --colorBG: #000;
   --oppositeBG: #fff;
   --secondFontColor: #888484;
   --offsetColorBG: #141414;
+  --tileBorderColor: 2px solid rgba(60, 60 ,60, 0.6);
+  --tileOnRowBorderColor: 2px solid rgba(83, 83, 91, 0.75);
   --invisibleBG: rgba(0, 0 ,0, 0.0);
   --greenBG: #588c4c;
   --yellowBG: #b89c3c;
   --darkGreyBG: #403c3c;
   --lightGreyBG: #888484;
-}
+  --uncheckedKey: #fff;
+  --checkedKey: #fff;
+} */
 
-.darkroot {
+.lightroot {
   --fontColor: #000;
   --oppositeFont: #fff;
   --colorBG: #fff;
   --oppositeBG: #000;
   --secondFontColor: #888484;
   --offsetColorBG: #fff;
+  --tileBorderColor: 2px solid rgba(83, 83, 91, 0.3);
+  --tileOnRowBorderColor: 2px solid rgba(83, 83, 91, 0.75);
   --invisibleBG: rgba(0, 0 ,0, 0.0);
   --greenBG: #588c4c;
   --yellowBG: #b89c3c;
   --darkGreyBG: #403c3c;
-  --lightGreyBG: #888484;
+  --lightGreyBG: #d8d4dc;
+  --uncheckedKey: #000;
+  --checkedKey: #fff;
 }
 
 /* General body styling */
 * {
-  background-color: var(--colorBG);
-  color: var(--fontColor);
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
   font-family: 'Lato', sans-serif;
   font-family: 'Roboto', sans-serif;
+}
+
+body {
+  background-color: var(--colorBG);
+  color: var(--fontColor);
 }
 
 button {
@@ -59,7 +70,7 @@ button {
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-bottom: 1.75px #4a4a4a solid;
+  border-bottom: 1px solid rgba(60, 60 ,60, 0.5);
 }
 
 #tile-container {
@@ -130,7 +141,7 @@ svg {
   justify-content: center;
   align-items: center;
   font-size: 30px;
-  border: 2px solid rgba(60, 60 ,60, 0.6);
+  border: var(--tileBorderColor);
   margin: 2px;
   min-width: 62.5px;
   min-height: 62.5px;
@@ -138,7 +149,7 @@ svg {
 
 /* Styling to change tile border colour when selected */
 #tile-container .on-row {
-  border: 2px solid rgba(83, 83, 91, 0.75);
+  border: var(--tileOnRowBorderColor);
 }
 
 /* Styling to shake current row of divs when answer is not valid */
@@ -228,24 +239,51 @@ svg {
   flex: 1.5 !important;
 }
 
-/* Colouring tiles & keys */
+/* Colouring tiles*/
 .green-color {
   background-color: var(--greenBG);
+  color: var(--white);
   border: 0px !important;
 }
 
 .yellow-color {
   background-color: var(--yellowBG);
+  color: var(--white);
   border: 0px !important;
 }
 
 .darkgrey-color {
   background-color: var(--darkGreyBG);
+  color: var(--white);
   border: 0px !important;
 }
 
 .lightgrey-color {
   background-color: var(--lightGreyBG)
+}
+
+/* Colouring keys */
+.green-color-key {
+  background-color: var(--greenBG);
+  color: var(--checkedKey);
+  border: 0px !important;
+}
+
+.yellow-color-key {
+  background-color: var(--yellowBG);
+  color: var(--checkedKey);
+  border: 0px !important;
+}
+
+.darkgrey-color-key {
+  background-color: var(--darkGreyBG);
+  color: var(--checkedKey);
+  border: 0px !important;
+}
+
+.lightgrey-color-key {
+  background-color: var(--lightGreyBG);
+  color: var(--uncheckedKey);
 }
 
 
@@ -289,7 +327,6 @@ svg {
 }
 
 #popup p {
-  background-color: var(--invisibleBG);
   color: var(--oppositeFont);
 }
 
@@ -305,7 +342,8 @@ svg {
   top: 7vh;
   left: 0px;
   z-index: 1;
-  border-right: 1.5px solid rgba(60, 60 ,60, 0.6);
+  border-right: 1px solid rgba(60, 60 ,60, 0.5);
+  background-color: var(--colorBG);
 }
 
 .dropdown-hide {
@@ -338,6 +376,8 @@ svg {
   border: 0px;
   margin: 10px;
   cursor: pointer;
+  background-color: var(--invisibleBG);
+  color: var(--fontColor);
 }
 
 #dropdown-header h1 {
@@ -361,7 +401,6 @@ svg {
   position: absolute;
   left: 50%;
   top: 25%;
-  background-color: var(--invisibleBG);
   padding: 15px;
 }
 
@@ -373,14 +412,13 @@ svg {
   top: -50%;
   align-items: center;
   background-color: var(--offsetColorBG);
-  border: 0.5px solid rgba(60, 60 ,60, 0.6);
+  border: 0.5px solid rgba(60, 60 , 60, 0.5);
   border-radius: 5px;
 }
 
 #scores-container {
   display: flex;
   flex-direction: row;
-  background-color: var(--invisibleBG);
 }
 
 #scores-container div {
@@ -389,37 +427,33 @@ svg {
   align-items: center;
   margin: 5px;
   padding: 3px;
-  background-color: var(--invisibleBG);
 }
 
 #scoreboard-container button {
   align-self: flex-end;
-  background-color: var(--invisibleBG);
   border: 0px;
   cursor: pointer;
   margin-right: 5px;
   margin-top: 5px;
+  background-color: var(--invisibleBG);
+  color: var(--fontColor);
 }
 
 #scoreboard-container h3 {
-  background-color: var(--invisibleBG);
   font-size: 15px;
   margin-top: -5px;
 }
 
 #scoreboard-container h4 {
-  background-color: var(--invisibleBG);
   font-size: 15px;
 }
 
 #scores-container .value {
   font-size: 32px;
   font-weight: 500;
-  background-color: var(--invisibleBG);
 }
 
 #scores-container span {
-  background-color: var(--invisibleBG);
   font-size: 12px;
   font-weight: 300;
 }
@@ -432,12 +466,10 @@ svg {
 
 #chart-score-container {
   width: 80%;
-  background-color: var(--invisibleBG);
   margin: 5px;
 }
 
 #chart-score-container span {
-  background-color: var(--invisibleBG);
   margin-right: 10px;
 }
 
@@ -450,7 +482,6 @@ svg {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  background-color: var(--invisibleBG);
   margin: 4px;
   align-items: center;
 }
@@ -471,7 +502,6 @@ svg {
 }
 
 #chart-score-container p {
-  background-color: var(--invisibleBG);
   float: right;
   margin-right: 3px;
   margin-left: 3px;
@@ -483,7 +513,6 @@ svg {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: var(--invisibleBG);
   margin-bottom: 20px;
 }
 
@@ -493,7 +522,6 @@ svg {
 
 /* Styling for countdown clock */
 #countdown-container {
-  background-color: var(--invisibleBG);
   width: 170px;
   margin: 10px 25px;
 }
@@ -501,22 +529,19 @@ svg {
 #countdown-container h5 {
   text-align: center;
   font-size: 15px;
-  background-color: var(--invisibleBG);
 }
 
 #countdown-container span {
-  background-color: var(--invisibleBG);
   font-size: 32px;
 }
 
 /* Share Button Styling */
 #share-container {
-  background-color: var(--invisibleBG);
   padding: 10px 25px;
   border-left: 1px white solid;
 }
 
-#share-container button{
+#share-container button {
   background-color: var(--greenBG);
   border: 0px;
   border-radius: 5px;
@@ -540,6 +565,7 @@ svg {
   width: 100vw;
   height: 100vh;
   z-index: 2;
+  background-color: var(--colorBG);
 }
 
 .settings-hide {
@@ -565,7 +591,7 @@ svg {
   flex-direction: row;
   justify-content: space-between;
   padding: 15px 0px;
-  border-bottom: 1.5px solid rgba(60, 60 ,60, 0.6);
+  border-bottom: 1.5px solid rgba(60, 60 ,60, 0.5);
 }
 
 .settings-extra-text {
@@ -615,6 +641,8 @@ svg {
 #settings-header button {
   border: 0px;
   cursor: pointer;
+  background-color: var(--invisibleBG);
+  color: var(--fontColor);
 }
 
 
@@ -628,6 +656,7 @@ svg {
   width: 100vw;
   height: 100vh;
   z-index: 2;
+  background-color: var(--colorBG);
 }
 
 .help-hide {
@@ -657,7 +686,7 @@ svg {
   flex-direction: column;
   align-items: flex-start;
   padding: 15px 0px;
-  border-bottom: 1.5px solid rgba(60, 60 ,60, 0.6);
+  border-bottom: 1.5px solid rgba(60, 60 ,60, 0.5);
 }
 
 #help-examples {
@@ -665,7 +694,7 @@ svg {
   flex-direction: column;
   align-items: flex-start;
   padding: 15px 0px;
-  border-bottom: 1.5px solid rgba(60, 60 ,60, 0.6);
+  border-bottom: 1.5px solid rgba(60, 60 ,60, 0.5);
 }
 
 #help-footer {
@@ -692,4 +721,6 @@ svg {
 #help-header button {
   border: 0px;
   cursor: pointer;
+  background-color: var(--invisibleBG);
+  color: var(--fontColor);
 }

@@ -35,10 +35,6 @@ let missingYellowLetter = [];
 let hardModeOn = true;
 let emojiCopyPaste = "";
 let yeet = "hello";
-let played = 24;
-let wins = 21;
-let winPercentage =  Math.floor(wins / played * 100);
-let currentStreak = 14;
 let maxStreak = 14;
 
 
@@ -146,7 +142,7 @@ function makeKeyboardKeys() {
       addKey.textContent = key;
       addKey.setAttribute('data-key', key);
       addKey.setAttribute('id', key);
-      addKey.setAttribute('class', 'lightgrey-color');
+      addKey.setAttribute('class', 'lightgrey-color-key');
       addKey.addEventListener('click', () => click(key));
       keyboardRow.appendChild(addKey);
     })
@@ -273,20 +269,36 @@ function checkGuess() {
   } else if (validWords.includes(currentGuess) || validAnswers.includes(currentGuess) || currentGuess === wordle) {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
-            colorTiles();
-            jump();
             isGameOver = true;
             gameWon = true;
+            countWordles();
+            countWins();
+            countStreak();
+            updateMaxStreak()
             popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
-            togglePopUp();
-            copyResults();
-          } else if (currentTile === 5 && currentRow > 4) {
             colorTiles();
+            jump();
+            copyResults();
+            setTimeout( () => {
+              togglePopUp()
+            }, 3500)
+            setTimeout(() => {
+              toggleLoadScoreboard();
+            }, 4600)
+          } else if (currentTile === 5 && currentRow > 4) {
             isGameOver = true;
             gameWon = false;
+            countWordles();
+            endStreak();
             popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
-            togglePopUpLong();
+            colorTiles();
             copyResults();
+            setTimeout( () => {
+              togglePopUpLong()
+            }, 2000)
+            setTimeout(() => {
+              toggleLoadScoreboard();
+            }, 4200)
           } else {
             colorTiles();
             currentRow++;
@@ -311,20 +323,36 @@ function checkGuessHard() {
     if (hardModeColor()) {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
-            colorTiles();
-            jump();
             isGameOver = true;
             gameWon = true;
+            countWordles();
+            countWins();
+            countStreak();
+            updateMaxStreak()
             popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
-            togglePopUp();
-            copyResults();
-          } else if (currentTile === 5 && currentRow > 4) {
             colorTiles();
+            jump();
+            copyResults();
+            setTimeout( () => {
+              togglePopUp()
+            }, 3500)
+            setTimeout(() => {
+              toggleLoadScoreboard();
+            }, 4600)
+          } else if (currentTile === 5 && currentRow > 4) {
             isGameOver = true;
             gameWon = false;
+            countWordles();
+            endStreak();
             popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
-            togglePopUpLong();
+            colorTiles();
             copyResults();
+            setTimeout( () => {
+              togglePopUpLong()
+            }, 2000)
+            setTimeout(() => {
+              toggleLoadScoreboard();
+            }, 4200)
           } else {
             colorTiles();
             currentRow++;
@@ -447,11 +475,11 @@ function colorEachKey(guess) {
       if (eachguess.letter === key.letter) {
         let buttonKey = document.getElementById(key.letter);
         if (eachguess.color === 'green-color') {
-          buttonKey.className = 'green-color';
+          buttonKey.className = 'green-color-key';
         } else if (eachguess.color === 'yellow-color') {
-          buttonKey.className = 'yellow-color';
+          buttonKey.className = 'yellow-color-key';
         } else if (eachguess.color === 'darkgrey-color') {
-          buttonKey.className = 'darkgrey-color';
+          buttonKey.className = 'darkgrey-color-key';
         }
       }
     });
@@ -538,7 +566,7 @@ function togglePopUpLong() {
   popUpMessage.classList.toggle('popup-hide');
   setTimeout(() => {
     popUpMessage.classList.toggle('popup-hide');
-  }, 3000 );
+  }, 2000 );
 }
 
 // Function to return the position of earliest missing green letter for hard mode in necessary vocab (1st, 2nd...)
@@ -618,13 +646,14 @@ function jump() {
 // Code to toggle leftside dropdown menu when clicked etc
 let dropdownButton = document.getElementById('dropdown-button');
 let dropdownContainer = document.getElementById('dropdown-container');
+let dropdownClose = document.getElementById('dropdown-close');
 
 dropdownButton.addEventListener('click', () => {
   dropdownContainer.classList.toggle('dropdown-hide');
 })
 
 document.addEventListener('click', function(e) {
-    if (!dropdownContainer.contains(e.target) && !dropdownButton.contains(e.target)) {
+    if (!dropdownContainer.contains(e.target) && !dropdownButton.contains(e.target) || dropdownClose.contains(e.target)) {
       dropdownContainer.classList.add('dropdown-hide');
     }
 });
@@ -636,7 +665,7 @@ let scoreboardContainer = document.getElementById('scoreboard-container');
 let clockShareContainer = document.getElementById('clock-share-container');
 let shareButton = document.getElementById('scoreboard-share-button')
 
-scoreboardButton.addEventListener('click', () => {
+function toggleLoadScoreboard() {
   scoreboardContainer.classList.toggle('scoreboard-hide');
   addScoreValues();
   if (isGameOver) {
@@ -644,6 +673,10 @@ scoreboardButton.addEventListener('click', () => {
   } else {
     clockShareContainer.classList.add('hide-clock-share')
   }
+}
+
+scoreboardButton.addEventListener('click', () => {
+  toggleLoadScoreboard();
 })
 
 document.addEventListener('click', function(e) {
@@ -701,6 +734,11 @@ function addScoreValues() {
   let winPercentageValue = document.getElementById('win-percentage-value');
   let currentStreakValue = document.getElementById('current-streak-value');
   let maxStreakValue = document.getElementById('max-streak-value');
+  let played = Number(localStorage.getItem('TotalGames'));
+  let wins = Number(localStorage.getItem('TotalWins'));
+  let winPercentage =  Math.floor(wins / played * 100);
+  let currentStreak = Number(localStorage.getItem('CurrentStreak'));
+  let maxStreak = Number(localStorage.getItem('MaxStreak'));
   playedValue.textContent = `${played}`;
   winPercentageValue.textContent = `${winPercentage}`;
   currentStreakValue.textContent = `${currentStreak}`;
@@ -775,20 +813,41 @@ function makeCountdown() {
 
 setInterval(makeCountdown, 1000)
 
-// Code to change to and from Hard Mode when switch is clicked
+// Code to change to and from Hard Mode when switch is clicked and to preserve this upon future page loads
 
 let hardModeSwitch = document.getElementById('hard-mode-switch');
 let hardModeCheckbox = document.getElementById('hard-mode-checkbox');
 
 function isHardModeOn() {
   if (hardModeCheckbox.checked) {
+    localStorage.setItem('HardMode', 'On');
     return true;
   } else {
+    localStorage.setItem('HardMode', 'Off');
     return false;
   }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+  let storedMode = localStorage.getItem('HardMode');
+  if (storedMode === 'On') {
+    hardModeCheckbox.checked = true;
+  } else {
+    hardModeCheckbox.checked = false;
+  }
+})
 
+hardModeCheckbox.addEventListener('click', () => {
+  if (hardModeCheckbox.checked === true) {
+    localStorage.setItem('HardMode', 'On');
+  } else if (hardModeCheckbox.checked === false) {
+    localStorage.setItem('HardMode', 'Off');
+  }
+})
+
+
+
+// Code to copy the results of the users daily wordle to the clipboard upon them clicking on the Share button in thr scoreboard
 function copyResults() {
   if (gameWon === true) {
     if (isHardModeOn()) {
@@ -848,5 +907,132 @@ function copyResults() {
     }
 
     emojiCopyPaste += '\n';
+  }
+}
+
+
+
+// Code to change to and from light and dar when switch is clicked
+
+let lightDarkThemeSwitch = document.getElementById('dark-theme-switch');
+let lightDarkThemeCheckbox = document.getElementById('dark-theme-checkbox');
+
+function lightDarkTheme() {
+  if (lightDarkThemeCheckbox.checked) {
+    darkTheme();
+  } else {
+    lightTheme();
+  }
+}
+
+lightDarkThemeSwitch.addEventListener('click', () => {
+  if (lightDarkThemeCheckbox.checked) {
+    darkTheme();
+    localStorage.setItem('theme', 'dark')
+  } else {
+    lightTheme();
+    localStorage.setItem('theme', 'light')
+  }
+})
+
+function lightTheme() {
+  let stylesheet = document.getElementById('rootStylesheet')
+  stylesheet.textContent = ":root { --fontColor: #000; --oppositeFont: #fff; --colorBG: #fff; --oppositeBG: #000; --secondFontColor: #888484; --offsetColorBG: #fff; --tileBorderColor: 2px solid rgba(83, 83, 91, 0.3); --tileOnRowBorderColor: 2px solid rgba(83, 83, 91, 0.75); --invisibleBG: rgba(0, 0 ,0, 0.0); --greenBG: #588c4c; --yellowBG: #b89c3c; --darkGreyBG: #403c3c; --lightGreyBG: #d8d4dc; --uncheckedKey: #000; --checkedKey: #fff; --white: #fff;}";
+}
+
+function darkTheme() {
+  let stylesheet = document.getElementById('rootStylesheet')
+  stylesheet.textContent = ":root { --fontColor: #fff; --oppositeFont: #000; --colorBG: #000; --oppositeBG: #fff; --secondFontColor: #888484; --offsetColorBG: #141414; --tileBorderColor: 2px solid rgba(60, 60 ,60, 0.6); --tileOnRowBorderColor: 2px solid rgba(83, 83, 91, 0.75); --invisibleBG: rgba(0, 0 ,0, 0.0); --greenBG: #588c4c; --yellowBG: #b89c3c; --darkGreyBG: #403c3c; --lightGreyBG: #888484; --uncheckedKey: #fff; --checkedKey: #fff; --white: #fff;}";
+}
+
+// Code to use previously selected theme upon load and check the theme checkbox upon load if necessary
+document.addEventListener('DOMContentLoaded', function() {
+  let storedTheme = localStorage.getItem('theme');
+  if (storedTheme === 'light') {
+    lightTheme();
+    lightDarkThemeCheckbox.checked = false;
+  } else {
+    darkTheme();
+    lightDarkThemeCheckbox.checked = true;
+  }
+})
+
+// Function to count number of games completed
+function countWordles() {
+  let totalGamesString = localStorage.getItem('TotalGames');
+  let totalGames = Number(totalGamesString);
+  totalGames += 1;
+  localStorage.setItem('TotalGames', totalGames);
+}
+
+// Function to count number of wins
+function countWins() {
+  let totalWinsString = localStorage.getItem('TotalWins');
+  let totalWins = Number(totalWinsString);
+  totalWins += 1;
+  localStorage.setItem('TotalWins', totalWins);
+}
+
+// Function to add to Streak upon win if player won the previous day too
+// function countStreak() {
+//   let today = new Date();
+//   today.setHours(0);
+//   today.setMinutes(0);
+//   today.setSeconds(0, 0);
+//   let todayTime = today.getTime();
+//   let lastWin = localStorage.getItem('LastWin');
+//   let lastWinDate = new Date(lastWin);
+//   let lastWinTime = lastWinDate.getTime();
+//   if (lastWinTime === todayTime - 86400000) {
+//     let currentStreak = Number(localStorage.getItem('CurrentStreak'));
+//     currentStreak += 1;
+//     localStorage.setItem('CurrentStreak', currentStreak);
+//     console.log('1');
+//   } else {
+//     localStorage.setItem('CurrentStreak', 1);
+//     console.log('2');
+//   }
+//   localStorage.setItem('LastWin', today);
+// }
+//
+// // Function to set streak to 0 without condition (to be used upon loss)
+// function endStreak() {
+//   localStorage.setItem('CurrentStreak', 0);
+// }
+//
+// // Function to reset current streak to 0 if a day was missed
+// function resetStreak() {
+//   let today = new Date();
+//   today.setHours(0);
+//   today.setMinutes(0);
+//   today.setSeconds(0, 0);
+//   let todayTime = today.getTime();
+//   let lastWin = localStorage.getItem('LastWin');
+//   let lastWinDate = new Date(lastWin);
+//   let lastWinTime = lastWinDate.getTime();
+//   if (todayTime - lastWinTime > 86400000) {
+//     localStorage.setItem('CurrentStreak', 0)
+//     console.log('oop');
+//   }
+// }
+
+// Code to add to streak upon win if missed days dont break streak
+function countStreak() {
+  let currentStreak = Number(localStorage.getItem('CurrentStreak'));
+  currentStreak += 1;
+  localStorage.setItem('CurrentStreak', currentStreak);
+}
+
+//Function to set streak to 0 without condition (to be used upon loss)
+function endStreak() {
+  localStorage.setItem('CurrentStreak', 0);
+}
+
+// Function to define and update max streak
+function updateMaxStreak() {
+  let currentStreak = Number(localStorage.getItem('CurrentStreak'));
+  let maxStreak = Number(localStorage.getItem('MaxStreak'));
+  if (currentStreak > maxStreak) {
+    localStorage.setItem('MaxStreak', currentStreak)
   }
 }
