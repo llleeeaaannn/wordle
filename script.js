@@ -34,8 +34,6 @@ let missingGreenLetter = [];
 let missingYellowLetter = [];
 let hardModeOn = true;
 let emojiCopyPaste = "";
-let yeet = "hello";
-let maxStreak = 14;
 
 
 // Function to create and insert 6 row div's into tile-container
@@ -274,10 +272,12 @@ function checkGuess() {
             countWordles();
             countWins();
             countStreak();
-            updateMaxStreak()
+            updateMaxStreak();
+            trackWinRowStats();
             popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
             colorTiles();
             jump();
+            saveGuess();
             copyResults();
             setTimeout( () => {
               togglePopUp()
@@ -292,6 +292,7 @@ function checkGuess() {
             endStreak();
             popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
             colorTiles();
+            saveGuess();
             copyResults();
             setTimeout( () => {
               togglePopUpLong()
@@ -301,6 +302,7 @@ function checkGuess() {
             }, 4200)
           } else {
             colorTiles();
+            saveGuess();
             currentRow++;
             currentTile = 0;
           }
@@ -328,7 +330,8 @@ function checkGuessHard() {
             countWordles();
             countWins();
             countStreak();
-            updateMaxStreak()
+            updateMaxStreak();
+            trackWinRowStats();
             popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
             colorTiles();
             jump();
@@ -419,15 +422,16 @@ function colorTiles() {
 
 
     tilesPerRow.forEach((tile, index) => {
+      tile.dataset.color = guess[index].color;
       setTimeout(() => {
         tile.classList.toggle('flip');
-      }, 400 * index)
+      }, 400 * index);
       setTimeout(() => {
         tile.classList.add(guess[index].color);
-      }, 400 * index + 400)
+      }, 400 * index + 400);
       setTimeout(() => {
         tile.classList.toggle('flip');
-      }, 1000 + 400 * index)
+      }, 1000 + 400 * index);
     })
 
 
@@ -666,8 +670,9 @@ let clockShareContainer = document.getElementById('clock-share-container');
 let shareButton = document.getElementById('scoreboard-share-button')
 
 function toggleLoadScoreboard() {
-  scoreboardContainer.classList.toggle('scoreboard-hide');
   addScoreValues();
+  barChartLength();
+  scoreboardContainer.classList.toggle('scoreboard-hide');
   if (isGameOver) {
     clockShareContainer.classList.remove('hide-clock-share')
   } else {
@@ -747,12 +752,12 @@ function addScoreValues() {
 
 // Code to define and calculate bar chart bar lengths
 function barChartLength() {
-  let barChartOne = 2;
-  let barChartTwo = 5;
-  let barChartThree = 8;
-  let barChartFour = 13;
-  let barChartFive = 13;
-  let barChartSix = 0;
+  let barChartOne = Number(localStorage.getItem('Row1Wins'));
+  let barChartTwo = Number(localStorage.getItem('Row2Wins'));
+  let barChartThree = Number(localStorage.getItem('Row3Wins'));
+  let barChartFour = Number(localStorage.getItem('Row4Wins'));
+  let barChartFive = Number(localStorage.getItem('Row5Wins'));
+  let barChartSix = Number(localStorage.getItem('Row6Wins'));
 
   let barCharts = [barChartOne, barChartTwo, barChartThree, barChartFour, barChartFive, barChartSix];
   let maxBar = Math.max.apply(Math.max, barCharts);
@@ -788,8 +793,6 @@ function barChartLength() {
   barSix.style.width = `${barChartSixLength}%`
   barSix.innerHTML = `<p>${barChartSix}</p>`
 }
-
-barChartLength();
 
 
 function makeCountdown() {
@@ -1036,3 +1039,78 @@ function updateMaxStreak() {
     localStorage.setItem('MaxStreak', currentStreak)
   }
 }
+
+
+// Code to track stats for how many guesses each win took
+function trackWinRowStats() {
+  let row = 'Row' + (currentRow + 1) + 'Wins';
+  let currentScore = Number(localStorage.getItem(row));
+  currentScore += 1;
+  localStorage.setItem(row, currentScore);
+}
+
+
+
+// Code to only allow one game per day
+
+
+
+
+
+
+
+// Code to populate previous guesses of that day upon page reload
+function saveGuess() {
+  for (i = 0; i < guesses[currentRow].length; i++) {
+    let guess = guesses[currentRow][i];
+    let key = 'row' + currentRow + 'tile' + i;
+    let color = document.getElementById(key).dataset.color;
+    setWithExpiry(key, guess, color);
+  }
+}
+
+
+function setWithExpiry(key, value, color) {
+	let today = new Date();
+  today.setHours(0);
+  today.setMinutes(0);
+  today.setSeconds(0, 0);
+
+	let valueWithExpiry = {
+		value: value,
+    color: color,
+    expiry: today.getTime()
+	}
+	localStorage.setItem(key, JSON.stringify(valueWithExpiry))
+}
+
+function verifyPreviousGuess() {
+  let now = new Date();
+  now.setHours(0);
+  now.setMinutes(0);
+  now.setSeconds(0, 0);
+  now = now.getTime();
+  for (row = 0; row < 6; row++) {
+    for (tile = 0; tile < 5; tile++) {
+      let thisTile = 'row' + row + 'tile' + tile;
+      if (localStorage.getItem(thisTile) === null) {
+        return;
+      } else {
+        let tileElement = document.getElementById(thisTile);
+        let previousGuess = JSON.parse(localStorage.getItem(thisTile));
+        let letter = previousGuess.value;
+        if (previousGuess.expiry === now) {
+          tileElement.textContent = letter;
+          tileElement.setAttribute('data', letter);
+          tileElement.classList.add(previousGuess.color);
+        } else {
+          localStorage.removeItem(thisTile);
+        }
+      }
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  verifyPreviousGuess();
+})
