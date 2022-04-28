@@ -22,9 +22,6 @@ function wordleNumber() {
 
 
 // Defining variables
-let currentRow = 0;
-let currentTile = 0;
-let isGameOver = false;
 let gameWon = false;
 let wordle = validAnswers[wordleNumber()];
 //let wordle = 'level';
@@ -73,9 +70,6 @@ function makePopUp() {
 makePopUp();
 
 let popUpMessage = document.getElementById('popup');
-
-
-
 
 
 // Function to create 3 div containers for the keyboard rows
@@ -164,13 +158,15 @@ let guesses = [
 
 // Function to add a letter to the current tile & row
 function addLetter(letter) {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
+  let currentTile = Number(localStorage.getItem('CurrentTile'));
   if (currentTile < 5 && currentRow < 6) {
     let tile = document.getElementById('row' + currentRow + 'tile' + currentTile);
     guesses[currentRow][currentTile] = letter;
     tile.textContent = letter;
     tile.setAttribute('data', letter);
     tile.classList.add('on-row');
-    currentTile++;
+    addToCurrentTile();
   }
 }
 
@@ -179,8 +175,11 @@ function addLetter(letter) {
 
 // Function to remove letter from current tile when 'BACK' key is clicked
 function removeLetter() {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
+  let currentTile = Number(localStorage.getItem('CurrentTile'));
   if (currentTile > 0) {
-    currentTile--;
+    removeFromCurrentTile();
+    currentTile = Number(localStorage.getItem('CurrentTile'));
     let tile = document.getElementById('row' + currentRow + 'tile' + currentTile);
     guesses[currentRow][currentTile] = '';
     tile.textContent = '';
@@ -192,12 +191,17 @@ function removeLetter() {
 
 // Function to handle key on keyboard being clicked and call relevant function
 function click(letter) {
-  if (!isGameOver) {
+  let isGameOver = JSON.parse(localStorage.getItem('GameOver'));
+  let isHardModeOn = localStorage.getItem('HardMode');
+  console.log(isHardModeOn);
+  if (!isGameOver.value) {
     if (letter === 'ENTER') {
-      if (isHardModeOn()) {
+      if (isHardModeOn === 'On') {
         checkGuessHard();
+        console.log('hard');
       } else {
         checkGuess();
+        console.log('easy');
       }
     } else if (letter === 'BACK') {
       removeLetter();
@@ -243,13 +247,17 @@ document.addEventListener('keydown', keyPressed);
 
 function keyPressed(e) {
   let letter = e.key.toUpperCase();
+  let isHardModeOn = localStorage.getItem('HardMode');
+  console.log(isHardModeOn);
   if (validLetters.includes(letter)) {
     click(letter);
   } else if (letter == 'ENTER') {
-    if (isHardModeOn()) {
+    if (isHardModeOn === 'On') {
       checkGuessHard();
+      console.log('harddd');
     } else {
       checkGuess()
+      console.log('easyyyyy');
     }
   } else if (letter == 'BACKSPACE') {
     removeLetter();
@@ -259,6 +267,8 @@ function keyPressed(e) {
 
 // Function to check if current guess is equal to wordle
 function checkGuess() {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
+  let currentTile = Number(localStorage.getItem('CurrentTile'));
   let currentGuess = guesses[currentRow].join('').toLowerCase();
   if (currentTile < 5) {
     popUpMessage.innerHTML = `<p>Not enough letters</p>`;
@@ -267,7 +277,9 @@ function checkGuess() {
   } else if (validWords.includes(currentGuess) || validAnswers.includes(currentGuess) || currentGuess === wordle) {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
-            isGameOver = true;
+            setGameOver(true);
+            setGameOngoing(false);
+            disableHardmodeCheckbox();
             gameWon = true;
             countWordles();
             countWins();
@@ -286,8 +298,9 @@ function checkGuess() {
               toggleLoadScoreboard();
             }, 4600)
           } else if (currentTile === 5 && currentRow > 4) {
-            isGameOver = true;
-            gameWon = false;
+            setGameOver(true);
+            setGameOngoing(false);
+            disableHardmodeCheckbox();
             countWordles();
             endStreak();
             popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
@@ -303,8 +316,10 @@ function checkGuess() {
           } else {
             colorTiles();
             saveGuess();
-            currentRow++;
-            currentTile = 0;
+            setGameOngoing(true);
+            disableHardmodeCheckbox();
+            changeCurrentRow();
+            resetCurrentTile();
           }
       }
   } else {
@@ -316,6 +331,8 @@ function checkGuess() {
 
 // CheckGuess for Hard Mode
 function checkGuessHard() {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
+  let currentTile = Number(localStorage.getItem('CurrentTile'));
   let currentGuess = guesses[currentRow].join('').toLowerCase();
   if (currentTile < 5) {
     popUpMessage.innerHTML = `<p>Not enough letters</p>`;
@@ -325,7 +342,9 @@ function checkGuessHard() {
     if (hardModeColor()) {
       if (currentTile === 5 && currentRow < 6) {
           if (currentGuess === wordle) {
-            isGameOver = true;
+            setGameOver(true);
+            setGameOngoing(false);
+            disableHardmodeCheckbox();
             gameWon = true;
             countWordles();
             countWins();
@@ -335,6 +354,7 @@ function checkGuessHard() {
             popUpMessage.innerHTML = `<p>GIMME DAT</p>`;
             colorTiles();
             jump();
+            saveGuess();
             copyResults();
             setTimeout( () => {
               togglePopUp()
@@ -343,12 +363,14 @@ function checkGuessHard() {
               toggleLoadScoreboard();
             }, 4600)
           } else if (currentTile === 5 && currentRow > 4) {
-            isGameOver = true;
-            gameWon = false;
+            setGameOver(true);
+            setGameOngoing(false);
+            disableHardmodeCheckbox();
             countWordles();
             endStreak();
             popUpMessage.innerHTML = `<p>${wordle.toUpperCase()}</p>`;
             colorTiles();
+            saveGuess();
             copyResults();
             setTimeout( () => {
               togglePopUpLong()
@@ -358,8 +380,11 @@ function checkGuessHard() {
             }, 4200)
           } else {
             colorTiles();
-            currentRow++;
-            currentTile = 0;
+            saveGuess();
+            setGameOngoing(true);
+            disableHardmodeCheckbox();
+            changeCurrentRow();
+            resetCurrentTile();
           }
       }
     } else {
@@ -385,6 +410,7 @@ function checkGuessHard() {
 
 // Function to color tiles and run function to color keys once answer is checked and then flip the row of tiles
 function colorTiles() {
+    let currentRow = Number(localStorage.getItem('CurrentRow'));
     let tilesPerRow = document.querySelector('#row' + currentRow).childNodes;
     let checkWordle = wordle;
     let guess = [];
@@ -495,8 +521,9 @@ function colorEachKey(guess) {
 
 // Function for Hard Mode to check that yellow and green letters from previous guesses are used
 function hardModeColor() {
-
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
   let tilesPerRow = document.querySelector('#row' + currentRow).childNodes;
+  console.log(tilesPerRow);
   let greenTotal = 0;
   let yellowTotal = 0;
   let guess = [];
@@ -505,8 +532,9 @@ function hardModeColor() {
   missingYellowLetter = [];
 
   tilesPerRow.forEach((tile, i) => {
-      guess.push({letter: tile.getAttribute('data'), position: i})
-      yellowGuess.push(tile.getAttribute('data'))
+    console.log(tile.getAttribute('data'));
+    guess.push({letter: tile.getAttribute('data'), position: i})
+    yellowGuess.push(tile.getAttribute('data'))
   })
 
 
@@ -590,6 +618,7 @@ function greenMissingPosition() {
 
 // Function to shake current row of tiles when guess is invalid
 function shake() {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
   let shakeRow = document.getElementById('row' + currentRow);
   shakeRow.classList.toggle('shake')
   setTimeout(() => {
@@ -600,6 +629,7 @@ function shake() {
 
 // Function to jump current row of tiles when guess is correct
 function jump() {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
   function jumpZero() {
     let jumpTileZero = document.getElementById('row' + currentRow + 'tile0');
     jumpTileZero.classList.toggle('jump');
@@ -672,8 +702,9 @@ let shareButton = document.getElementById('scoreboard-share-button')
 function toggleLoadScoreboard() {
   addScoreValues();
   barChartLength();
+  let isGameOver = JSON.parse(localStorage.getItem('GameOver'));
   scoreboardContainer.classList.toggle('scoreboard-hide');
-  if (isGameOver) {
+  if (isGameOver.value) {
     clockShareContainer.classList.remove('hide-clock-share')
   } else {
     clockShareContainer.classList.add('hide-clock-share')
@@ -808,7 +839,10 @@ function makeCountdown() {
   minutes = '0' + minutes
   seconds = '0' + seconds;
 
-  if (isGameOver === true) {
+  let isGameOver = JSON.parse(localStorage.getItem('GameOver'));
+  if (isGameOver === null) {
+    return;
+  } else if (isGameOver.value === true) {
     let countdown = document.getElementById('countdown-container');
     countdown.innerHTML = `<h5>NEXT WORDLE</h5><span> ${hours.slice(-2)} : ${minutes.slice(-2)} : ${seconds.slice(-2)}`;
   }
@@ -852,6 +886,7 @@ hardModeCheckbox.addEventListener('click', () => {
 
 // Code to copy the results of the users daily wordle to the clipboard upon them clicking on the Share button in thr scoreboard
 function copyResults() {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
   if (gameWon === true) {
     if (isHardModeOn()) {
       emojiCopyPaste += `Wordle ${wordleNumber()} ${currentRow + 1}/6*\n`
@@ -976,48 +1011,6 @@ function countWins() {
   localStorage.setItem('TotalWins', totalWins);
 }
 
-// Function to add to Streak upon win if player won the previous day too
-// function countStreak() {
-//   let today = new Date();
-//   today.setHours(0);
-//   today.setMinutes(0);
-//   today.setSeconds(0, 0);
-//   let todayTime = today.getTime();
-//   let lastWin = localStorage.getItem('LastWin');
-//   let lastWinDate = new Date(lastWin);
-//   let lastWinTime = lastWinDate.getTime();
-//   if (lastWinTime === todayTime - 86400000) {
-//     let currentStreak = Number(localStorage.getItem('CurrentStreak'));
-//     currentStreak += 1;
-//     localStorage.setItem('CurrentStreak', currentStreak);
-//     console.log('1');
-//   } else {
-//     localStorage.setItem('CurrentStreak', 1);
-//     console.log('2');
-//   }
-//   localStorage.setItem('LastWin', today);
-// }
-//
-// // Function to set streak to 0 without condition (to be used upon loss)
-// function endStreak() {
-//   localStorage.setItem('CurrentStreak', 0);
-// }
-//
-// // Function to reset current streak to 0 if a day was missed
-// function resetStreak() {
-//   let today = new Date();
-//   today.setHours(0);
-//   today.setMinutes(0);
-//   today.setSeconds(0, 0);
-//   let todayTime = today.getTime();
-//   let lastWin = localStorage.getItem('LastWin');
-//   let lastWinDate = new Date(lastWin);
-//   let lastWinTime = lastWinDate.getTime();
-//   if (todayTime - lastWinTime > 86400000) {
-//     localStorage.setItem('CurrentStreak', 0)
-//     console.log('oop');
-//   }
-// }
 
 // Code to add to streak upon win if missed days dont break streak
 function countStreak() {
@@ -1043,6 +1036,7 @@ function updateMaxStreak() {
 
 // Code to track stats for how many guesses each win took
 function trackWinRowStats() {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
   let row = 'Row' + (currentRow + 1) + 'Wins';
   let currentScore = Number(localStorage.getItem(row));
   currentScore += 1;
@@ -1051,49 +1045,39 @@ function trackWinRowStats() {
 
 
 
-// Code to only allow one game per day
-
-
-
-
-
-
-
 // Code to populate previous guesses of that day upon page reload
 function saveGuess() {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
   for (i = 0; i < guesses[currentRow].length; i++) {
     let guess = guesses[currentRow][i];
     let key = 'row' + currentRow + 'tile' + i;
+    console.log(guess, key);
     let color = document.getElementById(key).dataset.color;
     setWithExpiry(key, guess, color);
   }
 }
 
-
+// Save each letter of a entered guess alongside the time(day) and color
 function setWithExpiry(key, value, color) {
-	let today = new Date();
-  today.setHours(0);
-  today.setMinutes(0);
-  today.setSeconds(0, 0);
+	let now = getNowZeroTime();
 
 	let valueWithExpiry = {
 		value: value,
     color: color,
-    expiry: today.getTime()
+    expiry: now
 	}
 	localStorage.setItem(key, JSON.stringify(valueWithExpiry))
 }
 
+// Populate tiles and rows with previous guesses upon page load
 function verifyPreviousGuess() {
-  let now = new Date();
-  now.setHours(0);
-  now.setMinutes(0);
-  now.setSeconds(0, 0);
-  now = now.getTime();
+  let now = getNowZeroTime();
   for (row = 0; row < 6; row++) {
     for (tile = 0; tile < 5; tile++) {
       let thisTile = 'row' + row + 'tile' + tile;
       if (localStorage.getItem(thisTile) === null) {
+        localStorage.setItem('CurrentRow', row);
+        localStorage.setItem('CurrentTile', 0);
         return;
       } else {
         let tileElement = document.getElementById(thisTile);
@@ -1106,11 +1090,158 @@ function verifyPreviousGuess() {
         } else {
           localStorage.removeItem(thisTile);
         }
+        if (previousGuess.color === 'green-color' && previousGuess.expiry === now) {
+          greenLetters.push({letter: letter, position: tile});
+        } else if (previousGuess.color === 'yellow-color' && previousGuess.expiry === now) {
+          yellowLetters.push(letter);
+        }
       }
     }
+    localStorage.setItem('CurrentRow', row + 1);
+    localStorage.setItem('CurrentTile', 0);
   }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   verifyPreviousGuess();
+})
+
+// Function to add 1 to currentRow value in localStorage
+function changeCurrentRow() {
+  let currentRow = Number(localStorage.getItem('CurrentRow'));
+  currentRow += 1;
+  localStorage.setItem('CurrentRow', currentRow);
+}
+
+// Function to add 1 to currentTile value in localStorage
+function addToCurrentTile() {
+  let currentTile = Number(localStorage.getItem('CurrentTile'));
+  currentTile += 1;
+  localStorage.setItem('CurrentTile', currentTile);
+}
+
+// Function to subtract 1 from currentTile value in localStorage
+function removeFromCurrentTile() {
+  let currentTile = Number(localStorage.getItem('CurrentTile'));
+  currentTile -= 1;
+  localStorage.setItem('CurrentTile', currentTile);
+}
+
+// Function to set currentTile to 0
+function resetCurrentTile() {
+  localStorage.setItem('CurrentTile', 0);
+}
+
+
+// Function to set isGameOver along with date
+function setGameOver(value) {
+  let now = getNowZeroTime()
+  let isGameOver = {
+    value: value,
+    expiry: now
+  }
+  localStorage.setItem('GameOver', JSON.stringify(isGameOver))
+}
+
+
+// Function to check if the daily game is over
+function checkGameOver() {
+  let now = getNowZeroTime()
+
+  let gameOver = JSON.parse(localStorage.getItem('GameOver'));
+  if (gameOver === null) {
+    let isGameOver = {
+      value: false,
+      expiry: now
+    }
+    localStorage.setItem('GameOver', JSON.stringify(isGameOver))
+  } else if (gameOver.expiry === now) {
+    return;
+  } else {
+    let isGameOver = {
+      value: false,
+      expiry: now
+    }
+    localStorage.setItem('GameOver', JSON.stringify(isGameOver))
+  }
+}
+
+// Function to check if the daily game is over is set to true
+function checkGameOverTrue() {
+  let now = getNowZeroTime()
+
+  let gameOver = JSON.parse(localStorage.getItem('GameOver'));
+  if (gameOver === null) {
+    return;
+  } else if (gameOver.expiry === now && gameOver.value === true) {
+    setTimeout( () => {
+      toggleLoadScoreboard();
+    }, 1000);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  checkGameOver();
+  checkGameOverTrue()
+})
+
+// Function to return the getTime of today at 00:00:00
+function getNowZeroTime() {
+  let now = new Date();
+  now.setHours(0);
+  now.setMinutes(0);
+  now.setSeconds(0, 0);
+  return now.getTime();
+}
+
+
+// Function to set isGameOngoing along with date
+function setGameOngoing(value) {
+  let now = getNowZeroTime();
+  let isGameOngoing = {
+    value: value,
+    expiry: now
+  }
+  localStorage.setItem('GameOngoing', JSON.stringify(isGameOngoing))
+}
+
+
+function checkGameOngoing() {
+  let now = getNowZeroTime();
+
+  let gameOngoing = JSON.parse(localStorage.getItem('GameOngoing'));
+  if (gameOngoing === null) {
+    let isGameOngoing = {
+      value: false,
+      expiry: now
+    }
+    localStorage.setItem('GameOngoing', JSON.stringify(isGameOngoing));
+    return false;
+  } else if (gameOngoing.expiry === now && gameOngoing.value === true) {
+    return true;
+  } else {
+    let isGameOngoing = {
+      value: false,
+      expiry: now
+    }
+    localStorage.setItem('GameOngoing', JSON.stringify(isGameOngoing));
+    return false;
+  }
+}
+
+// Function to diable Hard Mode checkbox if IsGameOngoing is true and the expiry is today
+function disableHardmodeCheckbox() {
+  let now = getNowZeroTime();
+  let isGameOngoing = JSON.parse(localStorage.getItem('GameOngoing'));
+  if (isGameOngoing === null) {
+    hardModeCheckbox.disabled = false;
+  } else if (isGameOngoing.expiry === now && isGameOngoing.value === true) {
+    hardModeCheckbox.disabled = true;
+  } else {
+    hardModeCheckbox.disabled = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  disableHardmodeCheckbox();
 })
